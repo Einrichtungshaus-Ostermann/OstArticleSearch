@@ -15,5 +15,33 @@
             <description>Wie viele Artikel sollen standardmäßig pro Seite angezeigt werden?</description>
         </element>
 
+        <element type="number">
+            <name>newConditionDays</name>
+            <label>Artikel als Neu markiert</label>
+            <value>30</value>
+            <description>Wie alt (in Tagen) darf ein Artikel maximal sein, damit er als Neu markiert wird?</description>
+        </element>
+
+        <element type="boolean">
+            <name>hasPseudoPrice</name>
+            <label>Pseudopreis Filter aktivieren</label>
+            <value>true</value>
+            <description>Soll der Pseudopreis Filter aktiviert werden?</description>
+        </element>
+
+        <element type="boolean">
+            <name>searchStatus</name>
+            <label>Volltextsuche Filter aktivieren</label>
+            <value>true</value>
+            <description>Soll der Volltextsuche Filter aktiviert werden?</description>
+        </element>
+
+        <element type="boolean">
+            <name>shopwareSearchStatus</name>
+            <label>Shopware standard Suche aktivieren</label>
+            <value>false</value>
+            <description>Soll die Shopware standard Suche für die Volltextsuche aktiviert werden?</description>
+        </element>
+
     </elements>
 </config>

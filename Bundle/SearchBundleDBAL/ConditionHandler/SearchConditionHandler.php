@@ -85,64 +85,107 @@ class SearchConditionHandler implements ConditionHandlerInterface
 
         // do we want the default search?
         if ((bool) $this->configuration['shopwareSearchStatus'] === false) {
-            // join supplier for the name
-            $query->leftJoin(
-                'product',
-                's_articles_supplier',
-                'ostasSearchSupplier',
-                'ostasSearchSupplier.id = product.supplierID'
-            );
 
-            // join filter
-            $query->leftJoin(
-                'product',
-                's_filter_articles',
-                'ostasFilterArticles',
-                'ostasFilterArticles.articleID = product.id'
-            );
+            // custom search
+            $this->defaultSearch( $value, $condition, $query, $context );
 
-            // join filter values
-            $query->leftJoin(
-                'ostasFilterArticles',
-                's_filter_values',
-                'ostasFilterValues',
-                'ostasFilterValues.id = ostasFilterArticles.valueID'
-            );
-
-            // we need the search string split by whitespace
-            $split = explode(' ', $value);
-
-            // unique alias
-            $i = 0;
-
-            // loop every single search term
-            foreach ($split as $aktu) {
-                // unique alias
-                $param = 'ostasSearch_' . $i;
-
-                // every search paramter
-                $params = [
-                    '( product.name LIKE :' . $param . ' )',
-                    '( product.description LIKE :' . $param . ' )',
-                    '( variant.ordernumber LIKE :' . $param . ' )',
-                    '( ostasSearchSupplier.name LIKE :' . $param . ' )',
-                    '( ostasFilterValues.value LIKE :' . $param . ' )'
-                ];
-
-                // combined with OR and every single search tearm combined with AND
-                $query->andWhere('( ' . implode(' OR ', $params) . ' )');
-
-                // set parameter for this term
-                $query->setParameter($param, '%' . $aktu . '%');
-
-                // next unique alias
-                ++$i;
-            }
-
-            // and stop here
+            // done
             return;
         }
 
+        // shopware fulltext search
+        $this->shopwareSearch( $value, $condition, $query, $context );
+    }
+
+    /**
+     * ...
+     *
+     * @param string $value
+     * @param ConditionInterface   $condition
+     * @param QueryBuilder         $query
+     * @param ShopContextInterface $context
+     */
+    private function defaultSearch(string $value, ConditionInterface $condition, QueryBuilder $query, ShopContextInterface $context)
+    {
+        // join supplier for the name
+        $query->leftJoin(
+            'product',
+            's_articles_supplier',
+            'ostasSearchSupplier',
+            'ostasSearchSupplier.id = product.supplierID'
+        );
+
+        // join filter
+        $query->leftJoin(
+            'product',
+            's_filter_articles',
+            'ostasFilterArticles',
+            'ostasFilterArticles.articleID = product.id'
+        );
+
+        // join filter values
+        $query->leftJoin(
+            'ostasFilterArticles',
+            's_filter_values',
+            'ostasFilterValues',
+            'ostasFilterValues.id = ostasFilterArticles.valueID'
+        );
+
+        // we need the search string split by whitespace
+        $split = explode(' ', trim($value));
+
+        // unique alias
+        $i = 0;
+
+        // loop every single search term
+        foreach ($split as $aktu) {
+
+            // only valid
+            if ( empty( $aktu ) )
+                // next
+                continue;
+
+            // unique alias
+            $param = 'ostasSearch_' . $i;
+
+            // every search paramter
+            $params = [
+                '( product.name LIKE :' . $param . ' )',
+                '( product.description LIKE :' . $param . ' )',
+                '( variant.ordernumber LIKE :' . $param . ' )',
+                '( ostasSearchSupplier.name LIKE :' . $param . ' )',
+                '
+                product.id IN ( 
+                    SELECT DISTINCT(subfilterarticle_' . $i . '.articleID)
+                    FROM s_filter_values AS subfiltervalue_' . $i . '
+                        LEFT JOIN s_filter_articles AS subfilterarticle_' . $i . '
+                            ON subfiltervalue_' . $i . '.id = subfilterarticle_' . $i . '.valueID
+                    WHERE subfiltervalue_' . $i . '.value LIKE :' . $param . '
+                ) 
+                '
+            ];
+
+            // combined with OR and every single search tearm combined with AND
+            $query->andWhere('( ' . implode(' OR ', $params) . ' )');
+
+            // set parameter for this term
+            $query->setParameter($param, '%' . trim( $aktu ) . '%');
+
+            // next unique alias
+            ++$i;
+        }
+    }
+
+    /**
+     * ...
+     *
+     * @param string $value
+     * @param ConditionInterface   $condition
+     * @param QueryBuilder         $query
+     * @param ShopContextInterface $context
+     */
+    private function shopwareSearch(string $value, ConditionInterface $condition, QueryBuilder $query, ShopContextInterface $context)
+    {
         // get the shopware search query builder
         /* @var $searchTermQueryBuilder SearchTermQueryBuilderInterface */
         $searchTermQueryBuilder = $this->container->get('shopware_searchdbal.search_query_builder_dbal');
@@ -154,6 +197,7 @@ class SearchConditionHandler implements ConditionHandlerInterface
 
         // no matching products found by the search query builder
         if ($searchQuery === null) {
+
             // add condition that the result contains no product
             $query->andWhere('0 = 1');
 

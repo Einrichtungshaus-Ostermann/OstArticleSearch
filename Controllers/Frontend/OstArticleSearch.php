@@ -130,4 +130,11 @@ class Shopware_Controllers_Frontend_OstArticleSearch extends Enlight_Controller_
             'sCategoryContent' => ['id' => $contextService->getShopContext()->getShop()->getCategory()->getId()],
         ]);
     }
+
+    /**
+     * ...
+     */
+    public function searchAction()
+    {
+    }
 }

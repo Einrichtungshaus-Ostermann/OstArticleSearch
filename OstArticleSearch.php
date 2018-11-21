@@ -20,6 +20,8 @@ namespace OstArticleSearch;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Enlight_Event_EventArgs as EventArgs;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class OstArticleSearch extends Plugin
 {
@@ -64,11 +66,11 @@ class OstArticleSearch extends Plugin
     /**
      * ...
      *
-     * @param \Enlight_Event_EventArgs $arguments
+     * @param EventArgs $arguments
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return ArrayCollection
      */
-    public function registerFacetHandler(\Enlight_Event_EventArgs $arguments)
+    public function registerFacetHandler(EventArgs $arguments)
     {
         // our plugin handlers
         $handlers = [
@@ -85,71 +87,71 @@ class OstArticleSearch extends Plugin
         ];
 
         // return array collection
-        return new \Doctrine\Common\Collections\ArrayCollection($handlers);
+        return new ArrayCollection($handlers);
     }
 
     /**
      * ...
      *
-     * @param \Enlight_Event_EventArgs $arguments
+     * @param EventArgs $arguments
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return ArrayCollection
      */
-    public function registerConditionHandler(\Enlight_Event_EventArgs $arguments)
+    public function registerConditionHandler(EventArgs $arguments)
     {
         // our plugin handlers
         $handlers = [
             new Bundle\SearchBundleDBAL\ConditionHandler\NewConditionHandler(
-                ['newConditionDays' => 30]
+                $this->container->get( "ost_article_search.configuration" )
             ),
             new Bundle\SearchBundleDBAL\ConditionHandler\SpecialConditionHandler(),
             new Bundle\SearchBundleDBAL\ConditionHandler\CategoryConditionHandler(),
             new Bundle\SearchBundleDBAL\ConditionHandler\HasPseudoPriceConditionHandler(),
             new Bundle\SearchBundleDBAL\ConditionHandler\SearchConditionHandler(
                 $this->container,
-                ['hasPseudoPrice' => true, 'searchStatus' => true, 'shopwareSearchStatus' => false]
+                $this->container->get( "ost_article_search.configuration" )
             )
         ];
 
         // return array collection
-        return new \Doctrine\Common\Collections\ArrayCollection($handlers);
+        return new ArrayCollection($handlers);
     }
 
     /**
      * ...
      *
-     * @param \Enlight_Event_EventArgs $arguments
+     * @param EventArgs $arguments
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return ArrayCollection
      */
-    public function registerSortingHandlers(\Enlight_Event_EventArgs $arguments)
+    public function registerSortingHandlers(EventArgs $arguments)
     {
         // our plugin handlers
         $handlers = [
         ];
 
         // return array collection
-        return new \Doctrine\Common\Collections\ArrayCollection($handlers);
+        return new ArrayCollection($handlers);
     }
 
     /**
      * ...
      *
-     * @param \Enlight_Event_EventArgs $arguments
+     * @param EventArgs $arguments
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return ArrayCollection
      */
-    public function registerCriteriaRequestHandlers(\Enlight_Event_EventArgs $arguments)
+    public function registerCriteriaRequestHandlers(EventArgs $arguments)
     {
         // our plugin handlers
         $handlers = [
             new Bundle\SearchBundle\CriteriaRequestHandler(
-                ['hasPseudoPrice' => true, 'searchStatus' => true, 'shopwareSearchStatus' => false]
+                $this->container->get( "ost_article_search.configuration" )
             )
         ];
 
         // return array collection
-        return new \Doctrine\Common\Collections\ArrayCollection($handlers);
+        return new ArrayCollection($handlers);
     }
 
     /**
