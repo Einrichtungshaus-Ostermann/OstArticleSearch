@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-/**
+/*
  * Einrichtungshaus Ostermann GmbH & Co. KG - Article Search
  *
  * @package   OstArticleSearch
@@ -12,12 +12,8 @@
 
 use OstArticleSearch\Services\CriteriaFactory;
 
-
-
 class Shopware_Controllers_Frontend_OstArticleSearch extends Enlight_Controller_Action
 {
-
-
     /**
      * ...
      *
@@ -48,52 +44,40 @@ class Shopware_Controllers_Frontend_OstArticleSearch extends Enlight_Controller_
         ));
     }
 
-
     /**
      * ...
      *
      * @throws Exception
-     *
-     * @return void
      */
-
     public function indexAction()
     {
         // get services
         /* @var $contextService \Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService */
-        $contextService  = $this->get( "shopware_storefront.context_service" );
+        $contextService = $this->get('shopware_storefront.context_service');
 
         /* @var $productSearch \Shopware\Bundle\SearchBundle\ProductSearch */
-        $productSearch   = $this->get( "shopware_search.product_search" );
+        $productSearch = $this->get('shopware_search.product_search');
 
         /* @var $structConverter \Shopware\Components\Compatibility\LegacyStructConverter */
-        $structConverter = $this->get( "legacy_struct_converter" );
-
-
+        $structConverter = $this->get('legacy_struct_converter');
 
         // get type and current sorting to set default sorting
-        $sort = $this->Request()->getParam( "sSort" );
+        $sort = $this->Request()->getParam('sSort');
 
         // default sorting for different types
-        if ( $sort === null ) $sort = 1;
+        if ($sort === null) {
+            $sort = 1;
+        }
 
         // set the default settings
-        $this->Request()->setParam( "sSort", $sort );
-
-
-
-
-
-
+        $this->Request()->setParam('sSort', $sort);
 
         // get criteria factory
         /* @var $criteriaFactory CriteriaFactory */
-        $criteriaFactory = $this->get( "ost_article_search.criteria_factory" );
+        $criteriaFactory = $this->get('ost_article_search.criteria_factory');
 
         // get criteria
-        $criteria = $criteriaFactory->getListingCriteria( $this->Request() );
-
-
+        $criteria = $criteriaFactory->getListingCriteria($this->Request());
 
         // get products
         $result = $productSearch->search(
@@ -106,59 +90,44 @@ class Shopware_Controllers_Frontend_OstArticleSearch extends Enlight_Controller_
             $result->getProducts()
         );
 
-
-
         // get request parameters
-        $sort     = $this->Request()->getParam( "sSort" );
-        $page     = $this->Request()->getParam( "sPage", 1 );
-
-
+        $sort = $this->Request()->getParam('sSort');
+        $page = $this->Request()->getParam('sPage', 1);
 
         /** @var \Shopware\Bundle\StoreFrontBundle\Service\CustomSortingServiceInterface $service */
-        $service = $this->get( "shopware_storefront.custom_sorting_service" );
+        $service = $this->get('shopware_storefront.custom_sorting_service');
 
         // get default sorting
-        $sortings = $service->getAllCategorySortings( $contextService->getShopContext() );
-
-
+        $sortings = $service->getAllCategorySortings($contextService->getShopContext());
 
         // assign the view
-        $this->View()->assign( array(
-
+        $this->View()->assign([
             // default data
-            'sBanner'            => array(),
-            'sBreadcrumb'        => array(),
-            'emotions'           => array(),
+            'sBanner'            => [],
+            'sBreadcrumb'        => [],
+            'emotions'           => [],
             'hasEmotion'         => false,
             'showListing'        => true,
-            'showListingDevices' => array( 0, 1, 2, 3, 4 ),
+            'showListingDevices' => [0, 1, 2, 3, 4],
             'isHomePage'         => false,
             'criteria'           => $criteria,
             'facets'             => $result->getFacets(),
             'sPage'              => $page,
             'pageIndex'          => $page,
-            'pageSizes'          => array( 30, 60 ),
+            'pageSizes'          => [30, 60],
             'sPerPage'           => 30,
             'sTemplate'          => null,
             'sortings'           => $sortings,
             'sNumberArticles'    => $result->getTotalCount(),
             'sArticles'          => $products,
-            'shortParameters'    => $this->get( "query_alias_mapper" )->getQueryAliases(),
+            'shortParameters'    => $this->get('query_alias_mapper')->getQueryAliases(),
             'sSort'              => $sort,
 
             // additional parameter for ajax calls
-            'ostArticleSearchSeoTitle' => "Artikel Suche",
+            'ostArticleSearchSeoTitle' => 'Artikel Suche',
 
             // infinite scrolling wont work without category id and &c= will be transmitted to ajaxListing() and automatically set as criteria
-            'sCategoryContent' => array( 'id' => $contextService->getShopContext()->getShop()->getCategory()->getId() ),
-
-        ));
+            'sCategoryContent' => ['id' => $contextService->getShopContext()->getShop()->getCategory()->getId()],
+        ]);
     }
-
-
-
-
-
 }
-
-

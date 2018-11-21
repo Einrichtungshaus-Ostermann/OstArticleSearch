@@ -16,19 +16,14 @@ use Shopware\Bundle\SearchBundle\ConditionInterface;
 
 class NewCondition implements ConditionInterface
 {
-
-	/**
-	 * ...
-	 *
-	 * @return string
-	 */
-
-	public function getName()
-	{
-		// return name
-		return 'ostas_new';
-	}
-
+    /**
+     * ...
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        // return name
+        return 'ostas_new';
+    }
 }
-
-

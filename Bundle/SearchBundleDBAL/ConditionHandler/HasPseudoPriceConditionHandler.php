@@ -12,13 +12,13 @@
 
 namespace OstArticleSearch\Bundle\SearchBundleDBAL\ConditionHandler;
 
-use OstArticleSearch\Bundle\SearchBundle\Condition\SpecialCondition;
+use OstArticleSearch\Bundle\SearchBundle\Condition\HasPseudoPriceCondition;
 use Shopware\Bundle\SearchBundle\ConditionInterface;
 use Shopware\Bundle\SearchBundleDBAL\ConditionHandlerInterface;
 use Shopware\Bundle\SearchBundleDBAL\QueryBuilder;
 use Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface;
 
-class SpecialConditionHandler implements ConditionHandlerInterface
+class HasPseudoPriceConditionHandler implements ConditionHandlerInterface
 {
     /**
      * ...
@@ -30,7 +30,7 @@ class SpecialConditionHandler implements ConditionHandlerInterface
     public function supportsCondition(ConditionInterface $condition)
     {
         // return
-        return  $condition instanceof SpecialCondition;
+        return  $condition instanceof HasPseudoPriceCondition;
     }
 
     /**
@@ -46,11 +46,11 @@ class SpecialConditionHandler implements ConditionHandlerInterface
         $query->leftJoin(
             'product',
             's_articles_prices',
-            'ostasSpecialPrice',
-            "ostasSpecialPrice.articleID = product.id AND ostasSpecialPrice.pricegroup = 'EK' AND ostasSpecialPrice.to = 'beliebig'")
-        ;
+            'ostasHasPseudoPrice',
+            "ostasHasPseudoPrice.articleID = product.id AND ostasHasPseudoPrice.pricegroup = 'EK' AND ostasHasPseudoPrice.to = 'beliebig'"
+        );
 
         // set as condition
-        $query->andWhere('( ( ostasSpecialPrice.id IS NOT NULL ) AND ( ostasSpecialPrice.pseudoprice > 0 ) )');
+        $query->andWhere('( ( ostasHasPseudoPrice.id IS NOT NULL ) AND ( ostasHasPseudoPrice.pseudoprice > 0 ) )');
     }
 }

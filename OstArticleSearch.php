@@ -38,76 +38,119 @@ class OstArticleSearch extends Plugin
         parent::build($container);
     }
 
-
-
     /**
      * Return the subscribed controller events.
      *
      * @return array
      */
-
     public static function getSubscribedEvents()
     {
+        /*
+        // only if we have a session and a shop
+        if ( ( !Shopware()->Container()->initialized( "session" ) ) or ( !Shopware()->Container()->initialized( "shop" ) ) )
+            // we might be in the backend or in console command
+            return array();
+        */
+
         // return the events
-        return array(
-            'Shopware_SearchBundleDBAL_Collect_Facet_Handlers' => 'registerFacetHandler',
-            'Shopware_SearchBundleDBAL_Collect_Condition_Handlers' => 'registerConditionHandler'
-        );
+        return [
+            'Shopware_SearchBundleDBAL_Collect_Facet_Handlers'        => 'registerFacetHandler',
+            'Shopware_SearchBundleDBAL_Collect_Condition_Handlers'    => 'registerConditionHandler',
+            'Shopware_SearchBundleDBAL_Collect_Sorting_Handlers'      => 'registerSortingHandlers',
+            'Shopware_SearchBundle_Collect_Criteria_Request_Handlers' => 'registerCriteriaRequestHandlers',
+        ];
     }
-
-
 
     /**
      * ...
      *
-     * @param \Enlight_Event_EventArgs   $arguments
+     * @param \Enlight_Event_EventArgs $arguments
      *
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
-
-    public function registerFacetHandler( \Enlight_Event_EventArgs $arguments )
+    public function registerFacetHandler(\Enlight_Event_EventArgs $arguments)
     {
         // our plugin handlers
-        $handlers = array(
+        $handlers = [
             new Bundle\SearchBundleDBAL\FacetHandler\CategoryFacetHandler(
-                $this->container->get( "shopware_searchdbal.dbal_query_builder_factory" ),
-                $this->container->get( "snippets" )
-            )
-        );
+                $this->container->get('shopware_searchdbal.dbal_query_builder_factory'),
+                $this->container->get('snippets')
+            ),
+            new Bundle\SearchBundleDBAL\FacetHandler\HasPseudoPriceFacetHandler(
+                $this->container->get('snippets')
+            ),
+            new Bundle\SearchBundleDBAL\FacetHandler\SearchFacetHandler(
+                $this->container->get('snippets')
+            ),
+        ];
 
         // return array collection
-        return new \Doctrine\Common\Collections\ArrayCollection( $handlers );
+        return new \Doctrine\Common\Collections\ArrayCollection($handlers);
     }
-
-
-
-
 
     /**
      * ...
      *
-     * @param \Enlight_Event_EventArgs   $arguments
+     * @param \Enlight_Event_EventArgs $arguments
      *
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
-
-    public function registerConditionHandler( \Enlight_Event_EventArgs $arguments )
+    public function registerConditionHandler(\Enlight_Event_EventArgs $arguments)
     {
         // our plugin handlers
-        $handlers = array(
+        $handlers = [
             new Bundle\SearchBundleDBAL\ConditionHandler\NewConditionHandler(
-                array( 'newConditionDays' => 30 )
+                ['newConditionDays' => 30]
             ),
             new Bundle\SearchBundleDBAL\ConditionHandler\SpecialConditionHandler(),
-            new Bundle\SearchBundleDBAL\ConditionHandler\CategoryConditionHandler()
-        );
+            new Bundle\SearchBundleDBAL\ConditionHandler\CategoryConditionHandler(),
+            new Bundle\SearchBundleDBAL\ConditionHandler\HasPseudoPriceConditionHandler(),
+            new Bundle\SearchBundleDBAL\ConditionHandler\SearchConditionHandler(
+                $this->container,
+                ['hasPseudoPrice' => true, 'searchStatus' => true, 'shopwareSearchStatus' => false]
+            )
+        ];
 
         // return array collection
-        return new \Doctrine\Common\Collections\ArrayCollection( $handlers );
+        return new \Doctrine\Common\Collections\ArrayCollection($handlers);
     }
 
+    /**
+     * ...
+     *
+     * @param \Enlight_Event_EventArgs $arguments
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function registerSortingHandlers(\Enlight_Event_EventArgs $arguments)
+    {
+        // our plugin handlers
+        $handlers = [
+        ];
 
+        // return array collection
+        return new \Doctrine\Common\Collections\ArrayCollection($handlers);
+    }
 
+    /**
+     * ...
+     *
+     * @param \Enlight_Event_EventArgs $arguments
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function registerCriteriaRequestHandlers(\Enlight_Event_EventArgs $arguments)
+    {
+        // our plugin handlers
+        $handlers = [
+            new Bundle\SearchBundle\CriteriaRequestHandler(
+                ['hasPseudoPrice' => true, 'searchStatus' => true, 'shopwareSearchStatus' => false]
+            )
+        ];
+
+        // return array collection
+        return new \Doctrine\Common\Collections\ArrayCollection($handlers);
+    }
 
     /**
      * Activate the plugin.
@@ -119,8 +162,6 @@ class OstArticleSearch extends Plugin
         // clear complete cache after we activated the plugin
         $context->scheduleClearCache($context::CACHE_LIST_ALL);
     }
-
-
 
     /**
      * Install the plugin.
@@ -151,8 +192,6 @@ class OstArticleSearch extends Plugin
         parent::install($context);
     }
 
-
-
     /**
      * Update the plugin.
      *
@@ -170,8 +209,6 @@ class OstArticleSearch extends Plugin
         // call default updater
         parent::update($context);
     }
-
-
 
     /**
      * Uninstall the plugin.

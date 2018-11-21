@@ -16,22 +16,14 @@ use Shopware\Bundle\SearchBundle\FacetInterface;
 
 class CategoryFacet implements FacetInterface
 {
-
-	/**
-	 * ...
-	 *
-	 * @return string
-	 */
-
-	public function getName()
-	{
-		// return name
-		return 'ostas_category';
-	}
-
-
-
-
+    /**
+     * ...
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        // return name
+        return 'ostas_category';
+    }
 }
-
-

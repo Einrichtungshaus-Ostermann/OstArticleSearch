@@ -10,11 +10,9 @@
  * @license   proprietary
  */
 
-namespace OstArticleSearch\Bundle\SearchBundle\Condition;
+namespace OstArticleSearch\Bundle\SearchBundle\Facet;
 
-use Shopware\Bundle\SearchBundle\ConditionInterface;
-
-class SpecialCondition implements ConditionInterface
+class SearchFacet implements \Shopware\Bundle\SearchBundle\FacetInterface
 {
     /**
      * ...
@@ -24,6 +22,6 @@ class SpecialCondition implements ConditionInterface
     public function getName()
     {
         // return name
-        return 'ostas_special';
+        return 'ostas_search';
     }
 }

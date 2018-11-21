@@ -16,6 +16,12 @@
             <argument type="service" id="service_container" />
         </service>
 
+        <!-- events and hooks -->
+        <service id="ost_article_search.listeners.controllers.frontend" class="OstArticleSearch\Listeners\Controllers\Frontend">
+            <argument type="string">%ost_article_search.view_dir%</argument>
+            <argument type="service" id="ost_article_search.configuration" />
+            <tag name="shopware.event_listener" method="onPostDispatch" event="Enlight_Controller_Action_PostDispatchSecure" />
+        </service>
 
     </services>
 </container>

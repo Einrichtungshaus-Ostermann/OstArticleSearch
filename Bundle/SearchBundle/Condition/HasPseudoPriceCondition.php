@@ -12,9 +12,7 @@
 
 namespace OstArticleSearch\Bundle\SearchBundle\Condition;
 
-use Shopware\Bundle\SearchBundle\ConditionInterface;
-
-class SpecialCondition implements ConditionInterface
+class HasPseudoPriceCondition implements \Shopware\Bundle\SearchBundle\ConditionInterface
 {
     /**
      * ...
@@ -24,6 +22,6 @@ class SpecialCondition implements ConditionInterface
     public function getName()
     {
         // return name
-        return 'ostas_special';
+        return 'ostas_has_pseudo_price';
     }
 }

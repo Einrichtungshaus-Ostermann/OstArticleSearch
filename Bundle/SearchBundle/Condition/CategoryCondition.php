@@ -17,68 +17,54 @@ use Shopware\Bundle\SearchBundle\ConditionInterface;
 
 class CategoryCondition implements ConditionInterface
 {
+    /**
+     * ...
+     *
+     * @var Request
+     */
+    private $request;
 
-	/**
-	 * ...
-	 *
-	 * @var $request Request
-	 */
+    /**
+     * ...
+     *
+     * @param Request $request
+     */
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
 
-	private $request;
+    /**
+     * ...
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        // return name
+        return 'ostas_category';
+    }
 
+    /**
+     * ...
+     *
+     * @return array
+     */
+    public function getSelectedValues()
+    {
+        // did we even select this filter?
+        if (!$this->request->has($this->getName())) {
+            // we didnt
+            return [];
+        }
 
+        // get all ids from the request
+        $categories = explode(
+            '|',
+            $this->request->getParam($this->getName())
+        );
 
-	/**
-	 * ...
-	 *
-	 * @param Request   $request
-	 */
-
-	public function __construct( Request $request )
-	{
-		$this->request = $request;
-
-	}
-
-
-
-	/**
-	 * ...
-	 *
-	 * @return string
-	 */
-
-	public function getName()
-	{
-		// return name
-		return 'ostas_category';
-	}
-
-
-
-	/**
-	 * ...
-	 *
-	 * @return array
-	 */
-
-	public function getSelectedValues()
-	{
-		// did we even select this filter?
-		if ( !$this->request->has( $this->getName() ) )
-			// we didnt
-			return array();
-
-		// get all ids from the request
-		$categories = explode(
-			'|',
-			$this->request->getParam( $this->getName() )
-		);
-
-		// return them
-		return $categories;
-	}
-
+        // return them
+        return $categories;
+    }
 }
-
-
