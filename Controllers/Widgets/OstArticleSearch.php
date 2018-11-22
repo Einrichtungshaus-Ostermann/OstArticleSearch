@@ -137,7 +137,10 @@ class Shopware_Controllers_Widgets_OstArticleSearch extends Enlight_Controller_A
         // assign our articles
         $this->View()->assign([
             'sArticles' => $articles,
-            'pageIndex' => $this->Request()->getParam('sPage')
+            'pageIndex' => $this->Request()->getParam('sPage'),
+            'sCategoryContent' => [
+                'template' => "listing_" . Shopware()->Container()->get( "ost_article_search.configuration" )['listingTemplate'] . ".tpl"
+            ]
         ]);
 
         // fetch the listing
@@ -164,7 +167,7 @@ class Shopware_Controllers_Widgets_OstArticleSearch extends Enlight_Controller_A
             'sPage'           => $this->Request()->getParam('sPage'),
             'pages'           => ceil($result->getTotalCount() / $sPerPage),
             'baseUrl'         => $this->Request()->getBaseUrl() . $this->Request()->getPathInfo(),
-            'pageSizes'       => [30, 60],
+            'pageSizes'       => [(integer) Shopware()->Container()->get( "ost_article_search.configuration" )['listingLimit']],
             'shortParameters' => $this->container->get('query_alias_mapper')->getQueryAliases(),
             'limit'           => $sPerPage,
         ]);

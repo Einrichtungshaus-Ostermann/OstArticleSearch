@@ -8,6 +8,13 @@
             <label><![CDATA[<b>Allgemeine Einstellungen</b>]]></label>
         </element>
 
+        <element type="text">
+            <name>listingTemplate</name>
+            <label>Box Template</label>
+            <value>4column</value>
+            <description>Welches Template für die Artikelboxen soll angezeigt werden? Gültige Angaben: 4column, 5column</description>
+        </element>
+
         <element type="number">
             <name>listingLimit</name>
             <label>Artikel pro Seite</label>

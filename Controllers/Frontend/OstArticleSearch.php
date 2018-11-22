@@ -114,8 +114,8 @@ class Shopware_Controllers_Frontend_OstArticleSearch extends Enlight_Controller_
             'facets'             => $result->getFacets(),
             'sPage'              => $page,
             'pageIndex'          => $page,
-            'pageSizes'          => [30, 60],
-            'sPerPage'           => 30,
+            'pageSizes'          => [(integer) Shopware()->Container()->get( "ost_article_search.configuration" )['listingLimit']],
+            'sPerPage'           => (integer) Shopware()->Container()->get( "ost_article_search.configuration" )['listingLimit'],
             'sTemplate'          => null,
             'sortings'           => $sortings,
             'sNumberArticles'    => $result->getTotalCount(),
@@ -123,11 +123,17 @@ class Shopware_Controllers_Frontend_OstArticleSearch extends Enlight_Controller_
             'shortParameters'    => $this->get('query_alias_mapper')->getQueryAliases(),
             'sSort'              => $sort,
 
-            // additional parameter for ajax calls
+            // additional parameters
+            'ostArticleSearchStatus' => 'true',
             'ostArticleSearchSeoTitle' => 'Artikel Suche',
+            'ostArticleSearchBoxTemplate' => Shopware()->Container()->get( "ost_article_search.configuration" )['listingTemplate'],
 
             // infinite scrolling wont work without category id and &c= will be transmitted to ajaxListing() and automatically set as criteria
-            'sCategoryContent' => ['id' => $contextService->getShopContext()->getShop()->getCategory()->getId()],
+            'sCategoryContent' => [
+                'id' => $contextService->getShopContext()->getShop()->getCategory()->getId(),
+                'template' => "listing_" . Shopware()->Container()->get( "ost_article_search.configuration" )['listingTemplate'] . ".tpl",
+                'productBoxLayout' => "listing_" . Shopware()->Container()->get( "ost_article_search.configuration" )['listingTemplate'] . ".tpl"
+            ],
         ]);
     }
 
