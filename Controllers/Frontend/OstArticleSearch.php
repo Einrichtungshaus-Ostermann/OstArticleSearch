@@ -66,7 +66,7 @@ class Shopware_Controllers_Frontend_OstArticleSearch extends Enlight_Controller_
 
         // default sorting for different types
         if ($sort === null) {
-            $sort = 1;
+            $sort = 5;
         }
 
         // set the default settings
