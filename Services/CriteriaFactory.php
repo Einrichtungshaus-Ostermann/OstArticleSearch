@@ -148,8 +148,9 @@ class CriteriaFactory
             new CustomFacet\CategoryFacet()
         );
 
-        // remove free shipping facet
+        // remove facets
         $criteria->removeFacet('shipping_free');
+        $criteria->removeFacet('ostas_has_pseudo_price');
 
         // default per page
         $criteria->limit(
