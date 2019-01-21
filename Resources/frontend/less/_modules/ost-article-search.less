@@ -11,9 +11,24 @@
 
 
 
-// more width for inputs
-.content--ost-article-search input {
-    display: block;
-    width: 95%;
-    margin-bottom: 8px;
+// ...
+body.is--ctl-ostarticlesearch.is--act-search {
+    div.content.content--ost-article-search {
+        border: 1px solid #dadae5;
+
+        form {
+            padding: 20px;
+
+            input {
+                display: block;
+                width: 100%;
+                margin-bottom: 8px;
+            }
+
+            button {
+                width: 20%;
+                text-align: center;
+            }
+        }
+    }
 }

@@ -11,6 +11,9 @@
  * 1.0.1
  * - fixed plugin name
  *
+ * 1.0.2
+ * - beautified search form
+ *
  * @package   OstArticleSearch
  *
  * @author    Eike Brandt-Warneke <e.brandt-warneke@ostermann.de>
